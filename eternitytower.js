@@ -2,7 +2,7 @@
 // @name         Eternity Tower Script
 // @namespace    http://tampermonkey.net/
 // @version      0.1a
-// @description  try to take over the world!
+// @description  Try to take over the world!
 // @author       You
 // @match        https://eternitytower.net/*
 // @grant        none
@@ -10,163 +10,158 @@
 
 (function() {
     'use strict';
-
-    //Done:
-//Cassie
-//Mio
-
-
 // === SCRIPT
-var debug = false;
-var healthThreshold = 67;
-//var abilityTimer = setInterval(useAbilities, 1000);
-var farmingInterval = 0;
-var isQuestActive = false;
+// CONFIG
+var debug = false;				// used for debug purposes (TODO)
+var mainInterval = 10;			// Timer interval for main (in seconds)[10 seconds]
+var abilityInterval = 1; 		// Timer interval for abilities (in seconds)[1 second]
+var farmingFrequency = 6;		// Frequency to check farms (number of iterations of main)[1 min]
+var healthThreshold = 60;		// Health before moving on to adventures (percentage of max)[60% health]
+var fullHelathThreshold = 90;	// Health before moving from adventures to combat (percentage of max)[90% health]
+var eneregyThreshold = 1;		// Energy threshold before moving to adventures (absolute value)[1 energy]
 
-function beginBattle() {
-	// only do anything if we're in the combat tab
-	if ( location.pathname == "/combat" ) {
-
-		// in case we're stuck on adventure tab - Navigate to personal quest
-		if ($(".adventuresTabLink > a").hasClass("active")) { $(".nav-item.personalQuestTabLink").click(); }
-
-		// make sure we're only looking at the out-of-battle health bar, not the in-battle one
-		var healthBar = $(".d-flex.flex-column.m-3 > .progress.mt-1 > .progress-bar.bg-danger");
-		var isHealthBarHidden = healthBar.parent().parent().parent().parent().hasClass("hidden-xs-up");
-		var isHealthLow = healthBar.attr('aria-valuenow') < healthThreshold;
-
-		// figure out if energy bar is low - goes through energy and magic bars
-		var isEnergyBarLow = false;
-		var energyBar = $(".progress.mt-1 > .progress-bar.bg-warning").each( function() {
-			if ($(this).attr("aria-valuenow") <= 3) { // 1/40 = 2.5%
-				isEnergyBarLow = true;
-				return false;	// break the each loop
-			}
-		});
-
-		// get currently active adventures from sidebar
-		isQuestActive = ($(".d-flex.flex-wrap.align-items-center > .cancel-adventure > div").length) > 0 ? true : false;
-
-		// if out of battle healthbar is visible click battle button
-		if (!isHealthBarHidden) {
-			// try farming every so often
-			if (farmingInterval++ >= 30) {
-				doFarming();
-				farmingInterval = 0;
-			}
-
-			if (!isQuestActive) {
-				if (isEnergyBarLow || isHealthLow) {
-					// repeat until we're at full health
-					healthThreshold = 90;
-
-					// startadventure if energy low to better use downtime
-					debugLog("low energy or health - adventure");
-					doAdventure();
-
-				} else {
-					debugLog("begin battle");
-					$(".btn.btn-primary.mt-1.random-battle").click();
-					// change threshold so we can clump battles and quests
-					healthThreshold = 67;
-				}
-			} else { debugLog("pass combat - waiting on active quest"); }
-		}	// out of battle healthbar is hidden - we're out of tab or in combat
-		else if(isHealthBarHidden) { useAbilities(); }
-	} else if ( location.pathname == "/farming") { // not in /combat
-        debugLog("not in /combat");
-		doFarming();	// need to do this for greasemonkey since it runs script again? I think?
-	}
-}
-
+// HELPERS
+var abilityTimer;
+var farmingIntervalCount = 0;
+var capsLockDown = false;
+$(document).on( "keydown", function(event) {if (event.which == 20) { capsDown = true; }});
+$(document).on( "keyup", function(event) {if (event.which == 20) { capsDown = false; }});
+function navigateTo(string) { $(".nav-link[href='/" + string + "']").click(); }
 function useAbilities(){
-	// ability containers don't exist outside battle so catch exceptions
-	try{
-		$(".ability-icon-container").each(function() {
-			// don't use the targetting action
-			if ($(this).first().text().trim() != 't') {
-				$(this).click();
-				debugLog("used abilities");
-			}
-		});
-	} catch(err) {}
+	// destroy active ability timers and restart (since it's only called in combat)
+	window.clearInterval(abilityTimer);
+	abilityTimer = setInterval(function() {
+		try{	// ability containers don't exist outside battle so catch exceptions
+			$(".ability-icon-container").each(function() {
+				// don't use the targetting action
+				if ($(this).first().text().trim() != 't') { $(this).click(); }
+			});
+		} catch(err) {}
+	}, abilityInterval * 1000);
 }
-
-function doAdventure(){
+function doAdventure() {
 	// navigate to adventure tab
 	$(".nav-item.adventuresTabLink").click();
 
-	// Grab all adventure buttons
-	var shortAdventureButtons = null;
-	var longAdventureButtons = null;
-	var epicAdventureButtons = null;
-	$(".mt-3").each(function() {
-		if ($(this).text().trim() == "Short Adventures") {
-			shortAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
-		} else if ($(this).text().trim() == "Long Adventures") {
-			longAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
-		} else if ($(this).text().trim() == "Epic Adventures") {
-			epicAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
-		}
+	setTimeout(function(){
+		// Grab all adventure buttons
+		var shortAdventureButtons = null;
+		var longAdventureButtons = null;
+		var epicAdventureButtons = null;
+		$(".mt-3").each(function() {
+			if ($(this).text().trim() == "Short Adventures") {
+				shortAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
+			} else if ($(this).text().trim() == "Long Adventures") {
+				longAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
+			} else if ($(this).text().trim() == "Epic Adventures") {
+				epicAdventureButtons = $(".btn.btn-primary.start-adventure-btn", $(this).next());
+			}
+		});
+
+		// Click on one new adventure - fail to longer missions if shorter ones not available
+		if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
+		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
+		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
+
+		// Clear out completed adventures
+	   	$(".btn.btn-success.collect-adventure-btn").click();
+
+		// Navigate to personal quest
+		$(".nav-item.personalQuestTabLink").click();
 	});
-
-	// Click on one new adventure - fail to longer missions if shorter ones not active
-	if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
-	else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
-	else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
-	else { debugLog("no adventures"); }
-
-	// Clear out completed adventures
-   	if (!isQuestActive) { $(".btn.btn-success.collect-adventure-btn").click(); }
-
-	// Navigate to personal quest
-	$(".nav-item.personalQuestTabLink").click();
 }
 
-function doFarming(){
-	// navigate to farming window
-	$(".nav-link[href='/farming']").click();
+// COMBAT
+function doCombat() {
+	var healthCheck = healthThreshold;
+	var healthBar = $(".d-flex.flex-column.m-3 > .progress.mt-1 > .progress-bar.bg-danger");
+	var isInCombat = healthBar.parent().parent().parent().parent().hasClass("hidden-xs-up");
+	var isHealthLow = healthBar.attr('aria-valuenow') < healthCheck;
+	var isEnergyBarLow = false;
+	var energyBar = $(".progress.mt-1 > .progress-bar.bg-warning").each( function() {
+		if ($(this).attr("aria-valuenow") <= 3) { // 1/40 = 2.5%
+			isEnergyBarLow = true;
+			return false;	// break the each loop
+		}
+	});
+	var isQuestActive = (parseFloat($(".d-flex.flex-wrap.align-items-center > .cancel-adventure > div").text().trim())) < 100 ? true : false;
 
+	if (!isInCombat) {		// figure out what to do since we're not in battle
+			if (!isQuestActive) {
+				if (isEnergyBarLow || isHealthLow) {
+					// quest until we have energy/health
+					healthCheck = fullHelathThreshold;
+					doAdventure();
+
+				} else {
+					// actually battle and change health threshold to group battles and quests
+					$(".btn.btn-primary.mt-1.random-battle").click();
+					healthCheck = healthThreshold;
+					useAbilities();
+				}
+			}
+		}
+		else if(isInCombat) { useAbilities(); }
+}
+
+// FARMING
+function doFarming(){
 	// need to set timeout so we can wait for page load - get rid of this when we start checking via sidebar
 	setTimeout(function(){
 
 		var farmingPlots = $(".d-flex.flex-column.flex-wrap > .farm-space-container:not('.inactive')");
 		var marigoldSeeds = $("img[src='/icons/marigoldSeed.svg']");
+		var cactusSeeds = $("img[src='/icons/cactusSeed.svg']");
 
 		// try picking the weeds
-		for (var i = 0; i < farmingPlots.length; i++) {
-			farmingPlots[i].click();
-			debugLog("planting plot");
+		for (var i = 0; i < farmingPlots.length; i++) { farmingPlots[i].click(); }
+
+		// buy seeds if we don't have any
+		if (marigoldSeeds.length < 1) {
+			$(".nav-item.shopLink").click();
+			$(".nav-item.miscLink").click();
+			$("button[data-shop-item-id='marigold_seed'].buy-10").click();
+		}
+		if (cactusSeeds.length < 1) {
+			$(".nav-item.shopLink").click();
+			$(".nav-item.miscLink").click();
+			$("button[data-shop-item-id='marigold_seed'].buy-10").click();
 		}
 
-		// try planting the weeds
+		// try planting the weeds. 1 marigold and 3 cacti
+		$(".nav-item.plotsLink").click();
 		try {
-			for (i = 0; i < farmingPlots.length; i++) {
-				marigoldSeeds[0].click();
+			marigoldSeeds[0].click();
+			for (i = 0; i < farmingPlots.length - 1; i++) {
+				cactusSeeds[0].click();
 			}
 		}
-		catch(err) {
-			debugLog("no seeds");
-		}
+		catch(err) { }
 
 		// navigate to combat window
 		$(".nav-link[href='/combat']").click();
-
-		// Navigate to personal quest
-		$(".nav-item.personalQuestTabLink").click();
 	});
-
 }
 
-function stopTimers() {
-	window.clearInterval(i1);
-	window.clearInterval(abilityTimer);
-}
+// MAIN TIMER
+var mainTimer = setInterval(function() {
+	if (!capsLockDown) {							// do nothing if caps is pressed
+		if (location.pathname == "/combat") { 		// do combat stuff
 
-function debugLog(string) {
-	if(debug) { console.log("[" + new Date().toUTCString() + "]" + string); }
-}
+			// check crops at regular intervals
+			if (++farmingIntervalCount >= farmingFrequency) {
+				farmingIntervalCount = 0;
+				navigateTo("farming");
+				doFarming();
+			}
 
-// MAIN
-var i1 = setInterval(beginBattle, 1000);
+			doCombat();
+		}
+		else if (location.pathname == "/farming") {	// do farming stuff
+			doFarming();
+		}
+	}
+}, mainInterval * 1000);
+
+// === /SCRIPT
 })();
