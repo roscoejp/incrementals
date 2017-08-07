@@ -19,7 +19,7 @@ var farmingFrequency = 6;		// Frequency to check farms (number of iterations of 
 var healthThreshold = 60;		// Health before moving on to adventures (percentage of max)[60% health]
 var fullHelathThreshold = 90;		// Health before moving from adventures to combat (percentage of max)[90% health]
 var eneregyThreshold = 1;		// Energy threshold before moving to adventures (absolute value)[1 energy]
-var reloadFrequency = 360		// Frequency to reload the page to fix memory errors (number of iterations of main)[1 hour]
+var reloadFrequency = 360;		// Frequency to reload the page to fix memory errors (number of iterations of main)[1 hour]
 
 // HELPERS
 var abilityTimer;
@@ -155,7 +155,7 @@ var mainTimer = setInterval(function() {
 				reloadFrequency = 0;
 				location.reload();
 			}
-			
+
 			// check crops at regular intervals
 			if (++farmingIntervalCount >= farmingFrequency) {
 				farmingIntervalCount = 0;
