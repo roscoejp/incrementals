@@ -24,7 +24,7 @@ var reloadFrequency = 360;		// Frequency to reload the page to fix memory errors
 // HELPERS
 var abilityTimer;
 var farmingIntervalCount = 0;
-var reloadIntervalConut = 0;
+var reloadIntervalCount = 0;
 var capsLockDown = false;
 $(document).on( "keydown", function(event) {if (event.which == 20) { capsDown = true; }});
 $(document).on( "keyup", function(event) {if (event.which == 20) { capsDown = false; }});
