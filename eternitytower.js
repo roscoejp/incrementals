@@ -65,9 +65,6 @@ function doAdventure() {
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
 
-		// Clear out completed adventures
-	   	$(".btn.btn-success.collect-adventure-btn").click();
-
 		// Navigate to personal quest
 		$(".nav-item.personalQuestTabLink").click();
 	});
@@ -88,6 +85,9 @@ function doCombat() {
 	});
 	var isQuestActive = (parseFloat($(".d-flex.flex-wrap.align-items-center > .cancel-adventure > div").text().trim())) < 100 ? true : false;
 
+	// Clear out completed adventures
+	$(".btn.btn-success.collect-adventure-btn").click();
+	
 	if (!isInCombat) {		// figure out what to do since we're not in battle
 		if (!isQuestActive) {
 			if (isEnergyBarLow || isHealthLow) {
