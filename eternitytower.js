@@ -86,7 +86,7 @@ function doCombat() {
 	var isQuestActive = (parseFloat($(".d-flex.flex-wrap.align-items-center > .cancel-adventure > div").text().trim())) < 100 ? true : false;
 
 	// Clear out completed adventures
-	$(".btn.btn-success.collect-adventure-btn").click();
+	$(".collect-adventure.user-ready").click()
 	
 	if (!isInCombat) {		// figure out what to do since we're not in battle
 		if (!isQuestActive) {
