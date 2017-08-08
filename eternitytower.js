@@ -66,7 +66,7 @@ function doAdventure() {
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
 
 		// Navigate to personal quest
-		$(".nav-item.personalQuestTabLink").click();
+		$(".collect-adventure").click();
 	});
 }
 
