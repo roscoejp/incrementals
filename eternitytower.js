@@ -71,9 +71,6 @@ function doAdventure() {
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
 		
-		// Collect quests
-		$(".collect-adventure").click();
-		
 		// Navigate to personal quest
 		$(".nav-item.personalQuestTabLink").click();
 	});
@@ -94,8 +91,8 @@ function doCombat() {
 	});
 	var isQuestActive = (parseFloat($(".d-flex.flex-wrap.align-items-center > .cancel-adventure > div").text().trim())) < 100 ? true : false;
 
-	// Clear out completed adventures
-	$(".collect-adventure.user-ready").click()
+	// Collect quests
+	$(".collect-adventure").click();
 	
 	if (!isInCombat) {		// figure out what to do since we're not in battle
 		if (!isQuestActive) {
@@ -128,15 +125,11 @@ function doFarming(){
 		for (var i = 0; i < farmingPlots.length; i++) { farmingPlots[i].click(); }
 
 		// buy seeds if we don't have any
-		if (marigoldSeeds.length < 1) {
+		if (marigoldSeeds.length < 1 || cactusSeeds.length < 1) {
 			$(".nav-item.shopLink").click();
 			$(".nav-item.miscLink").click();
-			$("button[data-shop-item-id='marigold_seed'].buy-10").click();
-		}
-		if (cactusSeeds.length < 1) {
-			$(".nav-item.shopLink").click();
-			$(".nav-item.miscLink").click();
-			$("button[data-shop-item-id='marigold_seed'].buy-10").click();
+			if (marigoldSeeds.length < 1) { $("button[data-shop-item-id='marigold_seed'].buy-10").click(); }
+			if (cactusSeeds.length < 1) { $("button[data-shop-item-id='cactus_seed'].buy-10").click(); }
 		}
 
 		// try planting the weeds. 1 marigold and 3 cacti
@@ -157,7 +150,7 @@ function doFarming(){
 // MAIN TIMER
 var mainTimer = setInterval(function() {
 	if (!capsLockDown) {					// do nothing if caps is pressed
-		if (location.pathname == "/combat") { 		// do combat stuff
+		if (location.pathname == "/combat" && $(".nav-item.personalQuestTabLink > a").hasClass("active")) {
 
 			// reload occassionally to fix memory errors
 			if (++reloadIntervalCount >= reloadFrequency) {
@@ -173,9 +166,6 @@ var mainTimer = setInterval(function() {
 			}
 
 			doCombat();
-		}
-		else if (location.pathname == "/farming") {	// do farming stuff
-			doFarming();
 		}
 	}
 }, mainInterval * 1000);
