@@ -70,9 +70,12 @@ function doAdventure() {
 		if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
-
-		// Navigate to personal quest
+		
+		// Collect quests
 		$(".collect-adventure").click();
+		
+		// Navigate to personal quest
+		$(".nav-item.personalQuestTabLink").click();
 	});
 }
 
