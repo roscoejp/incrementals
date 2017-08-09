@@ -145,7 +145,7 @@ function doFarming(){
 		catch(err) { }
 
 		// back to where we started
-		setTimeout(funtion(){
+		setTimeout(function(){
 		   	$(".nav-link[href='/combat']").click();
 			$(".nav-item.personalQuestTabLink").click();
 		});
