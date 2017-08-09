@@ -70,9 +70,6 @@ function doAdventure() {
 		if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
-		
-		// Navigate to personal quest
-		$(".nav-item.personalQuestTabLink").click();
 	});
 }
 
@@ -125,7 +122,7 @@ function doFarming(){
 		for (var i = 0; i < farmingPlots.length; i++) { farmingPlots[i].click(); }
 
 		// buy seeds if we don't have any
-		if (marigoldSeeds.length < 1 || cactusSeeds.length < 1) {
+		if (marigoldSeeds.length < 1 || cactusSeeds.length < 3) {
 			$(".nav-item.shopLink").click();
 			$(".nav-item.miscLink").click();
 			if (marigoldSeeds.length < 1) { $("button[data-shop-item-id='marigold_seed'].buy-10").click(); }
@@ -141,9 +138,6 @@ function doFarming(){
 			}
 		}
 		catch(err) { }
-
-		// navigate to combat window
-		$(".nav-link[href='/combat']").click();
 	});
 }
 
@@ -166,6 +160,10 @@ var mainTimer = setInterval(function() {
 			}
 
 			doCombat();
+			
+			// back to where we started
+			$(".nav-link[href='/combat']").click();
+			$(".nav-item.personalQuestTabLink").click();
 		}
 	}
 }, mainInterval * 1000);
