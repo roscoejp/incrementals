@@ -70,10 +70,11 @@ function doAdventure() {
 		if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
-	
-		// back to where we started
-		$(".nav-link[href='/combat']").click();
-		$(".nav-item.personalQuestTabLink").click();
+		
+		setTimeout(function(){
+			// back to where we started
+			$(".nav-item.personalQuestTabLink").click();
+		});
 	});
 }
 
@@ -144,8 +145,10 @@ function doFarming(){
 		catch(err) { }
 
 		// back to where we started
-		$(".nav-link[href='/combat']").click();
-		$(".nav-item.personalQuestTabLink").click();
+		setTimeout(funtion(){
+		   	$(".nav-link[href='/combat']").click();
+			$(".nav-item.personalQuestTabLink").click();
+		});
 	});
 }
 
