@@ -71,10 +71,8 @@ function doAdventure() {
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
 		
-		setTimeout(function(){
-			// back to where we started
-			$(".nav-item.personalQuestTabLink").click();
-		});
+		// back to where we started
+		$(".nav-item.personalQuestTabLink").click();
 	});
 }
 
@@ -116,6 +114,9 @@ function doCombat() {
 
 // FARMING
 function doFarming(){
+	// nav to farming
+	navigateTo("farming");
+	
 	// need to set timeout so we can wait for page load - get rid of this when we start checking via sidebar
 	setTimeout(function(){
 
@@ -145,10 +146,8 @@ function doFarming(){
 		catch(err) { }
 
 		// back to where we started
-		setTimeout(function(){
-		   	$(".nav-link[href='/combat']").click();
-			$(".nav-item.personalQuestTabLink").click();
-		});
+		$(".nav-link[href='/combat']").click();
+		$(".nav-item.personalQuestTabLink").click();
 	});
 }
 
@@ -166,7 +165,6 @@ var mainTimer = setInterval(function() {
 			// check crops at regular intervals
 			if (++farmingIntervalCount >= farmingFrequency) {
 				farmingIntervalCount = 0;
-				navigateTo("farming");
 				doFarming();
 			}
 
