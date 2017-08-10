@@ -78,6 +78,8 @@ function doAdventure() {
 
 // COMBAT
 function doCombat() {
+	$(".nav-item.personalQuestTabLink").click();
+
 	var healthCheck = healthThreshold;
 	var healthBar = $(".d-flex.flex-column.m-3 > .progress.mt-1 > .progress-bar.bg-danger");
 	var isInCombat = healthBar.parent().parent().parent().parent().hasClass("hidden-xs-up");
@@ -154,7 +156,10 @@ function doFarming(){
 // MAIN TIMER
 var mainTimer = setInterval(function() {
 	if (!capsLockDown) {					// do nothing if caps is pressed
-		if (location.pathname == "/combat" && $(".nav-item.personalQuestTabLink > a").hasClass("active")) {
+		var inPersonalCombat = $(".nav-item.personalQuestTabLink > a").hasClass("active");
+		var isAdventureTab = $(".nav-item.adventuresTabLink > a").hasClass("active");
+		
+		if (location.pathname == "/combat" && (inPersonalCombat || isAdventureTab)) {
 
 			// reload occassionally to fix memory errors
 			if (++reloadIntervalCount >= reloadFrequency) {
