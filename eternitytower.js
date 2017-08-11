@@ -70,7 +70,7 @@ function doAdventure() {
 		if (shortAdventureButtons.length > 0) { shortAdventureButtons.first().click(); }
 		else if (longAdventureButtons.length > 0) { longAdventureButtons.first().click(); }
 		else if (epicAdventureButtons.length > 0) { epicAdventureButtons.first().click(); }
-		
+
 		// back to where we started
 		$(".nav-item.personalQuestTabLink").click();
 	});
@@ -118,38 +118,47 @@ function doCombat() {
 function doFarming(){
 	// nav to farming
 	navigateTo("farming");
-	
+
 	// need to set timeout so we can wait for page load - get rid of this when we start checking via sidebar
 	setTimeout(function(){
 
-		var farmingPlots = $(".d-flex.flex-column.flex-wrap > .farm-space-container:not('.inactive')");
-		var marigoldSeeds = $("img[src='/icons/marigoldSeed.svg']");
-		var cactusSeeds = $("img[src='/icons/cactusSeed.svg']");
+	var farmingPlots = $(".d-flex.flex-column.flex-wrap > .farm-space-container:not('.inactive')");
+	var marigoldSeeds = $("img[src='/icons/marigoldSeed.svg']");
+        var marigoldSeedCount = marigoldSeeds.parent().text().trim();
+	var cactusSeeds = $("img[src='/icons/cactusSeed.svg']");
+        var cactusSeedCount = cactusSeeds.parent().text().trim();
 
-		// try picking the weeds
-		for (var i = 0; i < farmingPlots.length; i++) { farmingPlots[i].click(); }
+	// try picking the weeds
+	for (var i = 0; i < farmingPlots.length; i++) { farmingPlots[i].click(); }
 
-		// buy seeds if we don't have any
-		if (marigoldSeeds.length < 1 || cactusSeeds.length < 3) {
-			$(".nav-item.shopLink").click();
-			$(".nav-item.miscLink").click();
-			if (marigoldSeeds.length < 1) { $("button[data-shop-item-id='marigold_seed'].buy-10").click(); }
-			if (cactusSeeds.length < 1) { $("button[data-shop-item-id='cactus_seed'].buy-10").click(); }
+        // Figure out how to actually buy seeds
+	// buy seeds if we don't have any
+	//if (marigoldSeeds.length < 1 || cactusSeeds.length < 1) {
+	//	$(".nav-item.shopLink").click();
+	//	setTimeout(function(){
+        //        $(".nav-item.miscLink").click();
+        //        if (marigoldSeedCount < 1) { $("button[data-shop-item-id='marigold_seed'].buy-10").click(); }
+        //        if (cactusSeedCount < 3) { $("button[data-shop-item-id='cactus_seed'].buy-10").click(); }
+        //    });
+	//}
+
+	// try planting the weeds. 1 marigold and 3 cacti
+	$(".nav-item.plotsLink").click();
+	try {
+		marigoldSeeds[0].click();
+		for (i = 0; i < farmingPlots.length - 1; i++) {
+			cactusSeeds[0].click();
 		}
+	}
+	catch(err) { }
 
-		// try planting the weeds. 1 marigold and 3 cacti
-		$(".nav-item.plotsLink").click();
-		try {
-			marigoldSeeds[0].click();
-			for (i = 0; i < farmingPlots.length - 1; i++) {
-				cactusSeeds[0].click();
-			}
-		}
-		catch(err) { }
+	setTimeout(function(){
+            // back to where we started
+            navigateTo("combat");
+            $(".nav-item.personalQuestTabLink").click();
+        });
 
-		// back to where we started
-		$(".nav-link[href='/combat']").click();
-		$(".nav-item.personalQuestTabLink").click();
+
 	});
 }
 
@@ -158,7 +167,7 @@ var mainTimer = setInterval(function() {
 	if (!capsLockDown) {					// do nothing if caps is pressed
 		var inPersonalCombat = $(".nav-item.personalQuestTabLink > a").hasClass("active");
 		var isAdventureTab = $(".nav-item.adventuresTabLink > a").hasClass("active");
-		
+
 		if (location.pathname == "/combat" && (inPersonalCombat || isAdventureTab)) {
 
 			// reload occassionally to fix memory errors
