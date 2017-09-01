@@ -177,10 +177,10 @@ var mainTimer = setInterval(function() {
 			}
 
 			// check crops at regular intervals
-			if (++farmingIntervalCount >= farmingFrequency) {
+			/*if (++farmingIntervalCount >= farmingFrequency) {
 				farmingIntervalCount = 0;
 				doFarming();
-			}
+			}*/
 
 			doCombat();
 		}
