@@ -6,6 +6,7 @@
 // @author       You
 // @match        https://eternitytower.net/*
 // @grant        none
+// @date	 2014/06/06
 // ==/UserScript==
 
 (function() {
