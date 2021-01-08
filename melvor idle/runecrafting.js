@@ -3,7 +3,8 @@
 // ========================
 function startRunecrafting(clicked = false) {
 	//Idle checker
-	if (!idleChecker(CONSTANTS.skill.Runecrafting)) {
+	//if (!idleChecker(CONSTANTS.skill.Runecrafting)) {
+	if (true) {	// Allow for idling all skills at once
 		if (selectedRunecraft != null) {
 			//cancel if currently crafting
 			if (clicked && isRunecrafting && currentRunecraft === selectedRunecraft) {
