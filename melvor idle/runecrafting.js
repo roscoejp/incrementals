@@ -18,7 +18,7 @@ function startRunecrafting(clicked = false) {
 				currentRunecraft = selectedRunecraft;
 				let item = runecraftingItems[selectedRunecraft].itemID;
 				//make sure you have enough ore to actually smelt
-				let runecraftCheck = checkRunecraftingReq(item);
+				let runecraftCheck = true;
 				//check if the check failed. If not, continue
 				if (!runecraftCheck) {
 					notifyPlayer(CONSTANTS.skill.Runecrafting, "You don't have the required materials to create that.", "danger");
@@ -34,7 +34,7 @@ function startRunecrafting(clicked = false) {
 					animateProgress("runecrafting-progress", runecraftInterval);
 					runecraftingTimeout = setTimeout(function () {
 						//make sure you have enough ore to actually smelt
-						let runecraftCheck = checkRunecraftingReq(item);
+						let runecraftCheck = true;
 						//check if the check failed. If not, continue
 						if (!runecraftCheck) {
 							notifyPlayer(CONSTANTS.skill.Runecrafting, "You don't have the required materials to create that.", "danger");
@@ -67,10 +67,10 @@ function startRunecrafting(clicked = false) {
 								if (petUnlocked[10]) chanceTotal += PETS[10].chance;
 								if (getMasteryPoolProgress(CONSTANTS.skill.Runecrafting) >= masteryCheckpoints[2]) chanceTotal += 10;
 								if (chanceTotal < chanceToKeep) {
-									for (let i = 0; i < runecraftReqCheck.length; i++) {
+									//for (let i = 0; i < runecraftReqCheck.length; i++) {
 										//bank[runecraftReqCheck[i].bankID].qty -= items[item].runecraftReq[runecraftReqCheck[i].reqID].qty;
-										updateItemInBank(runecraftReqCheck[i].bankID, items[item].runecraftReq[runecraftReqCheck[i].reqID].id, -items[item].runecraftReq[runecraftReqCheck[i].reqID].qty);
-									}
+										//updateItemInBank(runecraftReqCheck[i].bankID, items[item].runecraftReq[runecraftReqCheck[i].reqID].id, -items[item].runecraftReq[runecraftReqCheck[i].reqID].qty);
+									//}
 								} else notifyPlayer(CONSTANTS.skill.Runecrafting, "You preserved your resources.", "success");
 								if (herbloreBonuses[18].bonus[0] === 0 && herbloreBonuses[18].charges > 0) {
 									let elementals = [CONSTANTS.item.Air_Rune, CONSTANTS.item.Water_Rune, CONSTANTS.item.Earth_Rune, CONSTANTS.item.Fire_Rune];
