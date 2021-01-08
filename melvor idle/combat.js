@@ -287,13 +287,14 @@ function setCombatDamageAdjustment() {
 				if (currentGamemode === 1) damageAdjustment = 10.8;
 				else damageAdjustment = 10.9;
 			}
-		}
+        }
+        damageAdjustment = 100;
 		return damageAdjustment;
 	}
 	return false;
 }
 
-// Better Change to hit
+// Better Change to hit, don't consume prayer points, ignore runes, and more XP
 function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true, useAncientRunes = true) {
 	let forceHit = false;
 	let setDamage = null;
@@ -386,21 +387,21 @@ function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true
 	if (itemStats[equippedItems[CONSTANTS.equipmentSlot.Weapon]] != 0) itemStats[equippedItems[CONSTANTS.equipmentSlot.Weapon]].stats[9]++;
 	if (items[equippedItems[CONSTANTS.equipmentSlot.Weapon]].type === "Ranged Weapon" || items[equippedItems[CONSTANTS.equipmentSlot.Weapon]].isRanged) {
 		if (equippedItems[CONSTANTS.equipmentSlot.Quiver] === 0 || ammo < 1 || items[equippedItems[CONSTANTS.equipmentSlot.Weapon]].ammoTypeRequired !== items[equippedItems[CONSTANTS.equipmentSlot.Quiver]].ammoType) {
-			hasAmmo = false;
+			hasAmmo = true;
 		}
 		if (hasAmmo) {
 			let chanceToKeep = Math.random() * 100;
 			if (chanceToKeep >= ammoPreservation) {
 				if (itemStats[equippedItems[CONSTANTS.equipmentSlot.Quiver]] !== 0) itemStats[equippedItems[CONSTANTS.equipmentSlot.Quiver]].stats[10]++;
-				ammo--;
-				equipmentSets[selectedEquipmentSet].ammo--;
+				//ammo--;
+				//equipmentSets[selectedEquipmentSet].ammo--;
 			}
 			if (itemStats[equippedItems[CONSTANTS.equipmentSlot.Quiver]] !== 0) itemStats[equippedItems[CONSTANTS.equipmentSlot.Quiver]].stats[9]++;
 			updateAmmo();
 		}
 	}
 	if (items[equippedItems[CONSTANTS.equipmentSlot.Weapon]].isMagic) {
-		let ignoreRunes = false;
+		let ignoreRunes = true;
 		let chanceToPreserve = 0;
 		if (equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Skull_Cape) chanceToPreserve += 20;
 		if (petUnlocked[17]) chanceToPreserve += 5;
@@ -514,12 +515,12 @@ function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true
 			if (equippedItems.includes(CONSTANTS.item.Elder_Crown)) lifesteal += items[CONSTANTS.item.Elder_Crown].lifesteal;
 			if (lifesteal > 0) healPlayer += damageToEnemy * (lifesteal / 100);
 			if (healPlayer > 0) updatePlayerHitpoints(Math.floor(healPlayer));
-			let combatXpToAdd = (damageToEnemy / numberMultiplier) * 4;
+			let combatXpToAdd = (damageToEnemy) * 4;
 			if (combatXpToAdd < 4) combatXpToAdd = 4;
 			let hpXpToAdd = ((damageToEnemy / numberMultiplier) * 1.33 * 100) / 100;
 			let prayerXpToAdd = 0;
 			for (let i = 0; i < activePrayer.length; i++) {
-				if (activePrayer[i]) prayerXpToAdd += (damageToEnemy / numberMultiplier) * 2 * PRAYER[i].pointsPerPlayer;
+				if (activePrayer[i]) prayerXpToAdd += (damageToEnemy) * 2 * PRAYER[i].pointsPerPlayer;
 			}
 			//Into the Mist Phase 3 stacking DR
 			if (combatData.enemy.intoTheMist) {
@@ -637,9 +638,9 @@ function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true
 		if (herbloreBonuses[13].bonus[0] !== null && herbloreBonuses[13].bonus[0] !== 11 && herbloreBonuses[13].bonus[0] !== 7 && herbloreBonuses[13].bonus[0] !== 1 && herbloreBonuses[13].bonus[0] !== 8 && herbloreBonuses[13].bonus[0] !== 10 && herbloreBonuses[13].charges > 0 && !isGolbinRaid) {
 			updateHerbloreBonuses(herbloreBonuses[13].itemID);
 		}
-		for (let i = 0; i < activePrayer.length; i++) {
-			if (activePrayer[i]) updatePrayerPoints(PRAYER[i].pointsPerPlayer);
-		}
+//		for (let i = 0; i < activePrayer.length; i++) {
+//			if (activePrayer[i]) updatePrayerPoints(PRAYER[i].pointsPerPlayer);
+//		}
 		if (combatData.player.attackSpeedDebuffTurns > 0) {
 			combatData.player.attackSpeedDebuffTurns--;
 			if (combatData.player.attackSpeedDebuffTurns <= 0) {
