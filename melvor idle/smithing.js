@@ -16,7 +16,7 @@ function startSmithing(clicked = false) {
 			} else if (skillLevel[CONSTANTS.skill.Smithing] >= items[smithingItems[selectedSmith].itemID].smithingLevel) {
 				let item = smithingItems[selectedSmith].itemID;
 				//make sure you have enough ore to actually smelt
-				let smithCheck = checkSmithingReq(item);
+				let smithCheck = true;
 				//check if the check failed. If not, continue
 				if (!smithCheck) {
 					notifyPlayer(CONSTANTS.skill.Smithing, "You don't have the required materials to Smith that.", "danger");
@@ -35,7 +35,7 @@ function startSmithing(clicked = false) {
 					animateProgress("smithing-progress", smithInterval);
 					smithingTimeout = setTimeout(function () {
 						//make sure you have enough ore to actually smelt
-						let smithCheck = checkSmithingReq(item);
+						let smithCheck = true;
 						//check if the check failed. If not, continue
 						if (!smithCheck) {
 							notifyPlayer(CONSTANTS.skill.Smithing, "You don't have the required materials to Smith that.", "danger");
@@ -81,10 +81,10 @@ function startSmithing(clicked = false) {
 									let hasCape = false;
 									if (equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Smithing_Skillcape || equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Max_Skillcape || equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Cape_of_Completion) hasCape = true;
 									//remove the bars from the bank
-									for (let i = 0; i < smithReqCheck.length; i++) {
-										if (hasCape && bank[smithReqCheck[i].bankID].id === CONSTANTS.item.Coal_Ore) updateItemInBank(smithReqCheck[i].bankID, items[item].smithReq[smithReqCheck[i].reqID].id, -items[item].smithReq[smithReqCheck[i].reqID].qty / 2);
-										else updateItemInBank(smithReqCheck[i].bankID, items[item].smithReq[smithReqCheck[i].reqID].id, -items[item].smithReq[smithReqCheck[i].reqID].qty);
-									}
+									//for (let i = 0; i < smithReqCheck.length; i++) {
+									//	if (hasCape && bank[smithReqCheck[i].bankID].id === CONSTANTS.item.Coal_Ore) updateItemInBank(smithReqCheck[i].bankID, items[item].smithReq[smithReqCheck[i].reqID].id, -items[item].smithReq[smithReqCheck[i].reqID].qty / 2);
+									//	else updateItemInBank(smithReqCheck[i].bankID, items[item].smithReq[smithReqCheck[i].reqID].id, -items[item].smithReq[smithReqCheck[i].reqID].qty);
+									//}
 								} else notifyPlayer(CONSTANTS.skill.Smithing, "You managed to preserve your resources", "info");
 								if (smithingItems[selectedSmith].itemID === CONSTANTS.item.Silver_Bar) {
 									if (herbloreBonuses[11].bonus[0] === 0 && herbloreBonuses[11].charges > 0) {
