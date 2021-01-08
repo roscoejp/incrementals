@@ -16,7 +16,7 @@ function startCrafting(clicked = false) {
             } else {
                 let item = craftingItems[selectedCraft].itemID;
                 //make sure you have enough ore to actually smelt
-                let craftCheck = checkCraftingReq(item);
+                let craftCheck = true;
                 isCrafting = true;
                 currentCraft = selectedCraft;
                 //check if the check failed. If not, continue
@@ -38,7 +38,7 @@ function startCrafting(clicked = false) {
                     animateProgress("crafting-progress", craftInterval);
                     craftingTimeout = setTimeout(function() {
                         //make sure you have enough ore to actually smelt
-                        let craftCheck = checkCraftingReq(item);
+                        let craftCheck = true;
                         //check if the check failed. If not, continue
                         if (!craftCheck) {
                             notifyPlayer(CONSTANTS.skill.Crafting, "You don't have the required materials to Craft that.", "danger");
@@ -67,10 +67,10 @@ function startCrafting(clicked = false) {
                                 if (getMasteryPoolProgress(CONSTANTS.skill.Crafting) >= masteryCheckpoints[1]) chanceTotal += 5;
                                 let chanceToKeep = Math.random() * 100;
                                 if (chanceTotal < chanceToKeep) {
-                                    for (let i = 0; i < craftReqCheck.length; i++) {
-                                        //bank[craftReqCheck[i].bankID].qty -= items[item].craftReq[craftReqCheck[i].reqID].qty;
-                                        updateItemInBank(craftReqCheck[i].bankID, items[item].craftReq[craftReqCheck[i].reqID].id, -items[item].craftReq[craftReqCheck[i].reqID].qty);
-                                    }
+                                    //for (let i = 0; i < craftReqCheck.length; i++) {
+                                    //    //bank[craftReqCheck[i].bankID].qty -= items[item].craftReq[craftReqCheck[i].reqID].qty;
+                                    //    updateItemInBank(craftReqCheck[i].bankID, items[item].craftReq[craftReqCheck[i].reqID].id, -items[item].craftReq[craftReqCheck[i].reqID].qty);
+                                    //}
                                 } else notifyPlayer(CONSTANTS.skill.Crafting, "You preserved your resources!", "success");
                                 statsCrafting[0].count += qtyToAdd;
                                 statsCrafting[1].count += craftInterval;
