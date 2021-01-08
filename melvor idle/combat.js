@@ -294,7 +294,7 @@ function setCombatDamageAdjustment() {
 	return false;
 }
 
-// Better Change to hit, don't consume prayer points, ignore runes, and more XP
+// Always hit, don't consume ammo/runes/prayerpoints, and get more XP
 function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true, useAncientRunes = true) {
 	let forceHit = false;
 	let setDamage = null;
