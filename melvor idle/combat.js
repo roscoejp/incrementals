@@ -3,7 +3,8 @@
 // ========================
 // Fast Enemy Respawns
 function loadNewEnemy() {
-	if (!idleChecker(CONSTANTS.skill.Hitpoints)) {
+	//if (!idleChecker(CONSTANTS.skill.Hitpoints)) {
+	if (true) {	// Allow for idling all skills at once
 		isInCombat = true;
 		newEnemyLoading = true;
 		updateGameTitle();
