@@ -3,7 +3,8 @@
 // ========================
 function startHerblore(clicked = false) {
 	//Idle checker
-	if (!idleChecker(CONSTANTS.skill.Herblore)) {
+	//if (!idleChecker(CONSTANTS.skill.Herblore)) {
+	if (true) {	// Allow for idling all skills at once
 		if (selectedHerblore != null) {
 			//cancel if currently fletching
 			if (clicked && isHerblore && currentHerblore === selectedHerblore) {
