@@ -3,7 +3,8 @@
 // ========================
 function startCrafting(clicked = false) {
     //Idle checker
-    if (!idleChecker(CONSTANTS.skill.Crafting)) {
+    //if (!idleChecker(CONSTANTS.skill.Crafting)) {
+    if (true) {	// Allow for idling all skills at once
         if (selectedCraft != null) {
             //cancel if currently crafting
             if (clicked && isCrafting && currentCraft === selectedCraft) {
