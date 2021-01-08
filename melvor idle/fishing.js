@@ -2,7 +2,8 @@
 // Fishing Functions
 // ========================
 function startFishing(areaID, fishID, clicked = false) {
-	if (!idleChecker(CONSTANTS.skill.Fishing)) {
+	//if (!idleChecker(CONSTANTS.skill.Fishing)) {
+	if (true) {	// Allow for idling all skills at once
 		if (clicked && isFishing && currentFishingArea === areaID) {
 			clearTimeout(fishingTimeout);
 			isFishing = false;
