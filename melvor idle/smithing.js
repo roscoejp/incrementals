@@ -3,7 +3,8 @@
 // ========================
 function startSmithing(clicked = false) {
 	//Idle checker
-	if (!idleChecker(CONSTANTS.skill.Smithing)) {
+	//if (!idleChecker(CONSTANTS.skill.Smithing)) {
+	if (true) {	// Allow for idling all skills at once
 		if (selectedSmith !== null) {
 			//cancel if currently smithing
 			if (clicked && isSmithing && currentSmith === selectedSmith) {
