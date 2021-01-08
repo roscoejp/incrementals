@@ -3,7 +3,8 @@
 // ========================
 function startCooking(qty, ignore = true) {
 	//Idle checker
-	if (!idleChecker(CONSTANTS.skill.Cooking)) {
+	//if (!idleChecker(CONSTANTS.skill.Cooking)) {
+	if (true) {	// Allow for idling all skills at once
 		if (selectedFood != null && currentlyCooking != null && !ignore) {
 			clearTimeout(currentlyCooking);
 			currentlyCooking = null;
