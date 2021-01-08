@@ -3,7 +3,8 @@
 // ========================
 function mineRock(ore, clicked = false, ignoreDepletion = false) {
 	//Idle checker
-	if (!idleChecker(CONSTANTS.skill.Mining)) {
+	//if (!idleChecker(CONSTANTS.skill.Mining)) {
+	if (true) {	// Allow for idling all skills at once
 		//cancel if currently mining
 		if (clicked && isMining && currentRock === ore) {
 			clearTimeout(miningTimeout);
