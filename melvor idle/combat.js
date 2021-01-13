@@ -653,3 +653,93 @@ function attackEnemy(playerSpec = false, specID = false, canAncientAttack = true
 	updateGameTitle();
 }
 
+// Curses
+function applyCurseToEnemy(curse, forceTurns = 3, forceApply = false) {
+  let hasRunes = true;
+  if (hasRunes || forceApply) {
+    switch (curse) {
+      case CONSTANTS.curse.Blinding_I:
+      case CONSTANTS.curse.Blinding_II:
+      case CONSTANTS.curse.Blinding_III:
+        combatData.enemy.maximumAttackRoll = Math.floor(combatData.enemy.maximumAttackRoll * (1 - CURSES[curse].effectValue / 100));
+        updateEnemyValues();
+        updatePlayerChanceToHit();
+        updateEnemyChanceToHit();
+        break;
+      case CONSTANTS.curse.Soul_Split_I:
+      case CONSTANTS.curse.Soul_Split_II:
+      case CONSTANTS.curse.Soul_Split_III:
+        combatData.enemy.maximumMagicDefenceRoll = Math.floor(combatData.enemy.maximumMagicDefenceRoll * (1 - CURSES[curse].effectValue / 100));
+        updateEnemyValues();
+        break;
+      case CONSTANTS.curse.Weakening_I:
+      case CONSTANTS.curse.Weakening_II:
+      case CONSTANTS.curse.Weakening_III:
+        combatData.enemy.maximumStrengthRoll = Math.floor(combatData.enemy.maximumStrengthRoll * (1 - CURSES[curse].effectValue / 100));
+        updateEnemyValues();
+        break;
+      case CONSTANTS.curse.Anguish_I:
+      case CONSTANTS.curse.Anguish_II:
+      case CONSTANTS.curse.Anguish_III:
+        combatData.enemy.extraDamageMultiplier = 1 + CURSES[curse].effectValue / 100;
+        break;
+      case CONSTANTS.curse.Decay:
+        combatData.enemy.maximumDefenceRoll = Math.floor(combatData.enemy.maximumDefenceRoll * (1 - CURSES[curse].effectValue[1] / 100));
+        combatData.enemy.maximumRangedDefenceRoll = Math.floor(combatData.enemy.maximumRangedDefenceRoll * (1 - CURSES[curse].effectValue[1] / 100));
+        combatData.enemy.maximumMagicDefenceRoll = Math.floor(combatData.enemy.maximumMagicDefenceRoll * (1 - CURSES[curse].effectValue[1] / 100));
+        updateEnemyValues();
+    }
+    combatData.enemy.isCursed = true;
+    combatData.enemy.curseTurnsLeft = forceTurns;
+    combatData.enemy.curseID = curse;
+  } else notifyPlayer(CONSTANTS.skill.Magic, 'You need more runes to cast your selected Curse Spell', 'danger');
+}
+
+// Aurora
+function updatePlayerAurora(useRunes = true) {
+  if (activeAurora !== null) {
+    if (AURORAS[activeAurora].requiredItem === - 1 || (AURORAS[activeAurora].requiredItem !== - 1 && equippedItems.includes(AURORAS[activeAurora].requiredItem))) {
+      let hasRunes = true;
+      if (!hasRunes) {
+        notifyPlayer(CONSTANTS.skill.Magic, 'You need more runes to keep your Aurora active', 'danger');
+        disablePlayerAurora();
+      }
+    } else {
+      notifyPlayer(CONSTANTS.skill.Magic, 'You need to equip the ' + items[AURORAS[activeAurora].requiredItem].name + ' to activate this Aurora', 'danger');
+      disablePlayerAurora();
+    }
+  }
+}
+
+// Really ensure we don't spend prayer
+function updatePrayerPoints(qty = 0, bury = false) {
+  if (isPrayer) $('#skill-nav-name-' + CONSTANTS.skill.Prayer).addClass('text-success');
+   else $('#skill-nav-name-' + CONSTANTS.skill.Prayer).removeClass('text-success');
+  if (equippedItems.includes(CONSTANTS.item.Priest_Hat) && qty > 0) qty -= items[CONSTANTS.item.Priest_Hat].prayerCostReduction;
+  if ((equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Prayer_Skillcape || equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Max_Skillcape || equippedItems[CONSTANTS.equipmentSlot.Cape] === CONSTANTS.item.Cape_of_Completion) && qty > 0) {
+    qty = Math.floor(qty / 2);
+    if (qty === 0) qty = 1;
+  }
+  if (petUnlocked[18] && qty > 0) {
+    let chance = Math.random() * 100;
+    if (chance < 5) qty = 0;
+  }
+  if (herbloreBonuses[13].bonus[0] === 10 && herbloreBonuses[13].charges > 0 && !bury && qty > 0 && !isGolbinRaid) {
+    let chance = Math.floor(Math.random() * 100);
+    if (herbloreBonuses[13].bonus[1] > chance) qty = 0;
+    updateHerbloreBonuses(herbloreBonuses[13].itemID);
+  }
+  prayerPoints -= 0;
+  if (prayerPoints < 0) prayerPoints = 0;
+  if (prayerPoints < 1) {
+    for (let i = 0; i < activePrayer.length; i++) {
+      if (activePrayer[i]) togglePrayer(i);
+    }
+  }
+  $('#combat-player-prayer-points-0').text(numberWithCommas(prayerPoints));
+  $('#combat-player-prayer-points-1').text(numberWithCommas(prayerPoints));
+  $('#combat-player-prayer-points-2').text('(' + numberWithCommas(prayerPoints) + ')');
+  $('#combat-player-prayer-points-3').text('(' + numberWithCommas(prayerPoints) + ')');
+  if (prayerPoints < 1) $('#combat-player-prayer-points-2').attr('class', 'text-danger');
+   else $('#combat-player-prayer-points-2').attr('class', 'text-success');
+}
